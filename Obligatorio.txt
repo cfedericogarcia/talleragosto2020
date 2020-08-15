@@ -1,5 +1,7 @@
 Se crea este archivo a modo de comprobar el correcto funcionamiento de git. 
 
+Archivo editado desde la web de github
+
 Taller Linux 2020
 
 Nicolas Isnardi
