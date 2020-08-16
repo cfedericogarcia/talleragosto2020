@@ -1,14 +1,22 @@
 ---
-- hosts: centos
+- hosts: webserver 
   remote_user: ansible
   become: yes
   become_method: sudo
   vars:
     lamp_packages:
-      - httpd
       - php
-      - mariadb-server
-      - mariadb
+#      - mariadb-server
+#      - mariadb
+    sitio: taller
+    server: www.taller.com.uy
+    hostmaster: admin@taller.com.uy
+
+  roles:
+  - role: apache-centos
+    when: ansible_facts['os_family'] == "RedHat"
+  - role: apache-ubuntu
+    when: ansible_facts['os_family'] == "Debian"
 
   tasks:
   - name: Install LAMP Software
@@ -16,11 +24,40 @@
       name: "{{  lamp_packages }}"
       state: latest
 
-  - name: Start and Enable Services
-    service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
+  - name: Create virtualhost content directories
+    file:
+      path: "{{ item }}"
+      recurse: yes
+      state: directory
+      owner: apache
+      group: apache
+      mode: '0755'
     loop:
-      - httpd
-      - mariadb-server  
+      - /var/WWW/{{ sitio }}
+      - /var/WWW/{{ sitio }}/html
+      - /var/WWW/{{ sitio }}/cgi-bin 
+
+#  - name: Start and Enable Services
+#    service:
+#      name: "{{ item }}"
+#      state: started
+#      enabled: yes
+#    loop:
+#      - mariadb
+  
+  - name: Create virtualhost configuration
+    template:
+      src: /templates/{{ sitio }}.j2
+      dest: /etc/httpd/vhost.d/{{ sitio }}.conf
+      owner: root
+      mode: '0644'
+    notify: Restart httpd 
+
+#  - name: Configure Firewall
+#    firewalld:
+#      service: "{{ item }}"
+#      state: enabled
+#      permanent: yes
+#      immediate: yes
+#    loop:
+#      - mysql      

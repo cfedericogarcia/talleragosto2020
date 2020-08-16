@@ -1,0 +1,36 @@
+---
+# tasks file for roles/apache-ubuntu
+- name: Install Apache Server
+  apt:
+    name: apache2
+    state: latest
+    update_cache: yes
+
+#- name: Create Virtualhost config directory
+#  file:
+#    path: /etc/apache2/vhost.d
+#    state: directory
+#    mode: '0755'
+#    owner: root
+
+#- name: Add virtualhost config directory to apache2.conf
+#  lineinfile:
+#    path: /etc/apache2/conf/apache2.conf
+#    line: IncludeOptional vhost.d/*.conf
+
+- name: Start and Enable Apache Services
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Configure Firewall
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    state: enabled  
+  loop:
+    - 80
+    - 443  
+    
+
