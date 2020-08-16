@@ -8,7 +8,7 @@
 
 #- name: Create Virtualhost config directory
 #  file:
-#    path: /etc/apache2/vhost.d
+#    path: /etc/apache2/sites-available
 #    state: directory
 #    mode: '0755'
 #    owner: root
