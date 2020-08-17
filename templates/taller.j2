@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+	<Proxy balancer://balancer}>
+	BalancerMember https://nodo1.taller.com.uy:8080
+        BalancerMember https://nodo2.taller.com.uy:8080
+	Require all grated
+	</Proxy>
+	ProxyPreserveHost On
+	ProxyPass /balancer-manager !
+	ProxyPass /balancer://balancer/
+      	ProxyPassReverse / balancer://balancer/
+	<Location "/balancer-manager">
+		SetHandler balancer-manager
+		Require ip 192.168.60.0/24
+     	</Location>
+</VirtualHost>
+	

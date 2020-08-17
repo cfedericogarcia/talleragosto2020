@@ -4,8 +4,7 @@
   become: yes
   become_method: sudo
   vars:
-    lamp_packages:
-      - php
+#    lamp_packages:
 #      - mariadb-server
 #      - mariadb
     sitio: taller
@@ -17,13 +16,12 @@
     when: ansible_facts['os_family'] == "RedHat"
   - role: apache-ubuntu
     when: ansible_facts['os_family'] == "Debian"
+  - role: php-centos
+    when: ansible_facts['os_family'] == "RedHat"
+  - role: php-ubuntu
+    when: ansible_facts['os_family'] == "Debian"
 
   tasks:
-  - name: Install LAMP Software
-    yum:
-      name: "{{  lamp_packages }}"
-      state: latest
-
   - name: Create virtualhost content directories
     file:
       path: "{{ item }}"
@@ -45,13 +43,23 @@
 #    loop:
 #      - mariadb
   
-  - name: Create virtualhost configuration
+  - name: Create virtualhost configuration Centos
     template:
       src: /templates/{{ sitio }}.j2
       dest: /etc/httpd/vhost.d/{{ sitio }}.conf
       owner: root
       mode: '0644'
+    when: ansible_facts['os_family'] == "RedHat"
     notify: Restart httpd 
+
+  - name: Create virtualhost configuration Ubuntu
+    template:
+      src: /templates/{{ sitio }}.j2
+      dest: /etc/apache2/sites-enable/{{ sitio }}.conf
+      owner: root
+      mode: '0644'  
+    when: ansible_facts['os_family'] == "Debian"
+    notify: Restart apache2
 
 #  - name: Configure Firewall
 #    firewalld:
