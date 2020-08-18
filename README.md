@@ -9,7 +9,6 @@ Configuración de Firewall y Servicios.
 Requirements
 ------------
 Es necesario tener configurado la clave publica/privada para poder acceder por ssh desde el controller  a los equipos que se van a controlar. 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
 Roles 
 --------------
